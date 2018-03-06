@@ -3,7 +3,8 @@
 
 #include "stdafx.h"
 #include "iostream"
-#include "stack"
+#include <queue>
+
 using namespace std;
 
  // Definition for singly - linked list.
@@ -16,29 +17,33 @@ using namespace std;
 
 
 class Solution {
+
 public:
-		static ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-		stack<int> s1, s2;
+	static ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		queue<int> q1, q2;
 		while (l1) {
-			s1.push(l1->val);	
+			q1.push(l1->val);
 			l1 = l1->next;
 		}
 		while (l2) {
-			s2.push(l2->val);
+			q2.push(l2->val);
 			l2 = l2->next;
 		}
 		int sum = 0;
 		ListNode *res = new ListNode(0);
-		while (!s1.empty() || !s2.empty()) {
-			if (!s1.empty()) { sum += s1.top(); s1.pop(); }
-			if (!s2.empty()) { sum += s2.top(); s2.pop(); }
-			res->val = sum % 10;
+		ListNode *mark = new ListNode(0);
+		mark = res;//标记节点（头节点），
+		while (!q1.empty() || !q2.empty()||sum!=0) {                 //有非空队列
+			if (!q1.empty()) { sum += q1.front(); q1.pop(); }
+			if (!q2.empty()) { sum += q2.front(); q2.pop(); }
 			ListNode *head = new ListNode(sum / 10);
-			head->next = res;
+			res->next = head;//先建节点再赋值，防止最后一次循环多一个0节点
 			res = head;
+			res->val = sum % 10;
 			sum /= 10;  //同时计算上一位是否进位，如果进位则将进位加进去
-		}
-		return res->val == 0 ? res->next : res;
+		}	
+		return mark->next;//跳过空节点
+		
 	}
 };
 
@@ -49,7 +54,7 @@ void main(){
 	ListNode *l3 = new ListNode(3);
 	ListNode *l4 = new ListNode(5);
 	ListNode *l5 = new ListNode(6);
-	ListNode *l6 = new ListNode(4);
+    ListNode *l6 = new ListNode(4);
 
 	l1->next = l2;
 	l2->next = l3;
@@ -63,6 +68,6 @@ void main(){
 		cout << begin->val << " ";
 		begin = begin->next;
 	}
-	
+
 
 }
